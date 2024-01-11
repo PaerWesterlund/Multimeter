@@ -2,9 +2,12 @@
  * p2.h
  *
  * Created: 2023-11-08 10:47:32
- * Author: mardea0831
+ * Author: mardea0831 (Martin Dean)
+ * Functions: Low level functions interfacing Arduino ports 
  * Edited: 2023-12-16
- * Editor: Pär Westerlund
+ * Editor: PÃ¤r Westerlund 
+ * Functions: High level functions starting with display_digit
+ * down to vin_ok in this file
  */ 
 
 
@@ -20,34 +23,34 @@
 
 void setup_p2(void) {
 
-    /*sätter i/o för PORTB
+    /*sÃ¤tter i/o fÃ¶r PORTB
     Bit     Arduino pin     Funktion        i/o 1 = out
     0       pin 8           Summer          1
-    1       pin 9           Val res hög     0
+    1       pin 9           Val res hÃ¶g     0
     2       pin 10          Val kortslutn   0
-    3       pin 11          Val res låg     0
-    4       pin 12          Val sp hög      0
-    5       pin 13          Val sp låg      0
-    6       crystal         Används ej      0
-    7       crystal         Används ej      0
+    3       pin 11          Val res lÃ¥g     0
+    4       pin 12          Val sp hÃ¶g      0
+    5       pin 13          Val sp lÃ¥g      0
+    6       crystal         AnvÃ¤nds ej      0
+    7       crystal         AnvÃ¤nds ej      0
 
     bit      76543210     */
     DDRB = 0b00000001;
     
-    /*sätter i/o för PORTC
+    /*sÃ¤tter i/o fÃ¶r PORTC
     Bit     Arduino pin     Funktion        i/o 1 = out
-    0       pin A0          Volt hög            0
-    1       pin A1          Resistans låg       0
-    2       pin A2          Resistans hög       0
-    3       pin A3          Volt låg            0
+    0       pin A0          Volt hÃ¶g            0
+    1       pin A1          Resistans lÃ¥g       0
+    2       pin A2          Resistans hÃ¶g       0
+    3       pin A3          Volt lÃ¥g            0
     4       pin A4          Banankontakt LED    1
     5       pin A5          Batterikontroll     0      
-    6       reset           Används ej 
-    7       ---             Används ej 
+    6       reset           AnvÃ¤nds ej 
+    7       ---             AnvÃ¤nds ej 
     bit      76543210     */
     DDRC = 0b00010000;
 
-    /*sätter i/o för PORTD
+    /*sÃ¤tter i/o fÃ¶r PORTD
     Bit     Arduino pin     Funktion        i/o 1 = out
     0       pin 0           Display 2       1
     1       pin 1           Display 1       1
@@ -60,7 +63,7 @@ void setup_p2(void) {
     bit      76543210       */
     DDRD = 0b11111111;
 
-    /*Initiera analogingångar*/
+    /*Initiera analogingÃ¥ngar*/
     ADMUX = (1 << REFS0);
     ADCSRA = ((1 << ADEN) | (1 << ADSC) | (1 << ADPS0) | (1 << ADPS1) | (1 << ADPS2));
     while ((ADCSRA & (1 << ADIF)) == 0) ;
@@ -74,10 +77,10 @@ void setup_p2(void) {
 /*                                                                      */
 /* Argument:                                                            */
 /* uint8_t input_number                                                 */
-/* Reprecenterar den ingång (0 - 5) som skall läsas av                  */
+/* Reprecenterar den ingÃ¥ng (0 - 5) som skall lÃ¤sas av                  */
 /*                                                                      */
 /* Return:                                                              */
-/* Det returnerande värdet är ett 16-bitars uint-tal mellan 0 - 1023    */
+/* Det returnerande vÃ¤rdet Ã¤r ett 16-bitars uint-tal mellan 0 - 1023    */
 /************************************************************************/
          
 uint16_t read_analogue_input(uint8_t input_number) {
@@ -93,10 +96,10 @@ uint16_t read_analogue_input(uint8_t input_number) {
 /*                                                                      */
 /* Argument:                                                            */
 /* uint8_t bit                                                          */
-/* Reprecenterar den bit på PORTB som skall läsas av                    */
+/* Reprecenterar den bit pÃ¥ PORTB som skall lÃ¤sas av                    */
 /*                                                                      */
 /* Return:                                                              */
-/* True eller False beroende på om ingången är hög eller låg            */
+/* True eller False beroende pÃ¥ om ingÃ¥ngen Ã¤r hÃ¶g eller lÃ¥g            */
 /************************************************************************/
 bool read_digital_input_portb(uint8_t bit) {
     return PINB & (1 << bit);
@@ -107,11 +110,11 @@ bool read_digital_input_portb(uint8_t bit) {
 /*                                                                      */
 /* Argument:                                                            */
 /* uint8_t bit                                                          */
-/* Reprecenterar den bit på PORTC som skall läsas av                    */
+/* Reprecenterar den bit pÃ¥ PORTC som skall lÃ¤sas av                    */
 /*                                                                      */
 /* Return:                                                              */
-/* True eller False beroende på om ingången är hög eller låg            */
-/* OBS! normalt används PORTC för analog läsning                        */
+/* True eller False beroende pÃ¥ om ingÃ¥ngen Ã¤r hÃ¶g eller lÃ¥g            */
+/* OBS! normalt anvÃ¤nds PORTC fÃ¶r analog lÃ¤sning                        */
 /************************************************************************/
 bool read_digital_input_portc(uint8_t bit) {
     return PINC & (1 << bit);
@@ -122,10 +125,10 @@ bool read_digital_input_portc(uint8_t bit) {
 /*                                                                      */
 /* Argument:                                                            */
 /* uint8_t bit                                                          */
-/* Reprecenterar den bit på PORTD som skall läsas av                    */
+/* Reprecenterar den bit pÃ¥ PORTD som skall lÃ¤sas av                    */
 /*                                                                      */
 /* Return:                                                              */
-/* True eller False beroende på om ingången är hög eller låg            */
+/* True eller False beroende pÃ¥ om ingÃ¥ngen Ã¤r hÃ¶g eller lÃ¥g            */
 /************************************************************************/
 
 bool read_digital_input_portd(uint8_t bit) {
@@ -137,10 +140,10 @@ bool read_digital_input_portd(uint8_t bit) {
 /*                                                                      */
 /* Argument:                                                            */
 /* uint8_t bit                                                          */
-/* Reprecenterar den bit på PORTB som skall skrivas till                */
+/* Reprecenterar den bit pÃ¥ PORTB som skall skrivas till                */
 /*                                                                      */
 /* bool value                                                           */
-/* true eller false beroende på om man vill sätta utgången till hög/låg */
+/* true eller false beroende pÃ¥ om man vill sÃ¤tta utgÃ¥ngen till hÃ¶g/lÃ¥g */
 /*                                                                      */
 /* Return:                                                              */
 /* Void                                                                 */
@@ -159,14 +162,14 @@ void write_digital_output_portb(uint8_t bit, bool value) {
 /*                                                                      */
 /* Argument:                                                            */
 /* uint8_t bit                                                          */
-/* Representerar den bit på PORTC som skall skrivas till                */
+/* Representerar den bit pÃ¥ PORTC som skall skrivas till                */
 /*                                                                      */
 /* bool value                                                           */
-/* true eller false beroende på om man vill sätta utgången till hög/låg */
+/* true eller false beroende pÃ¥ om man vill sÃ¤tta utgÃ¥ngen till hÃ¶g/lÃ¥g */
 /*                                                                      */
 /* Return:                                                              */
 /* Void                                                                 */
-/* OBS! normalt används PORTC för analog läsning                        */
+/* OBS! normalt anvÃ¤nds PORTC fÃ¶r analog lÃ¤sning                        */
 /************************************************************************/
 void write_digital_output_portc(uint8_t bit, bool value) {
     if(value) {
@@ -181,10 +184,10 @@ void write_digital_output_portc(uint8_t bit, bool value) {
 /*                                                                      */
 /* Argument:                                                            */
 /* uint8_t bit                                                          */
-/* Representerar den bit på PORTD som skall skrivas till                */
+/* Representerar den bit pÃ¥ PORTD som skall skrivas till                */
 /*                                                                      */
 /* bool value                                                           */
-/* true eller false beroende på om man vill sätta utgången till hög/låg */
+/* true eller false beroende pÃ¥ om man vill sÃ¤tta utgÃ¥ngen till hÃ¶g/lÃ¥g */
 /*                                                                      */
 /* Return:                                                              */
 /* Void                                                                 */
@@ -490,7 +493,7 @@ void display_value(float value, uint8_t decimals, bool vin_low) {
 float volt_low(void) {
     float volt;
 
-    /* Omvandla analog nivå till max 5V */
+    /* Omvandla analog nivÃ¥ till max 5V */
     volt = ((float)(read_analogue_input(3)))/204.6;
     return volt;
 }
@@ -505,7 +508,7 @@ float volt_low(void) {
 float volt_high(void) {
     float volt;
 
-    /* Omvandla analog nivå */
+    /* Omvandla analog nivÃ¥ */
     volt = ((float)(read_analogue_input(0)))/26.06;
     return volt;
 }
@@ -520,7 +523,7 @@ float volt_high(void) {
 float res_low(void) {
     float volt, resistance;
 
-    /* Omvandla analog nivå till spänning och räkna ut resistansen */
+    /* Omvandla analog nivÃ¥ till spÃ¤nning och rÃ¤kna ut resistansen */
     volt = ((float)(read_analogue_input(1)))/204.6;
     resistance = (988*volt)/(5 - volt);
     return resistance;
@@ -561,7 +564,7 @@ void res_beep(void) {
 float res_high(void) {
     float volt, resistance;
 
-    // Omvandla analog nivå //
+    // Omvandla analog nivÃ¥ //
     volt = ((float)(read_analogue_input(2)))/204.6;
     resistance = (9.920*volt)/(5 - volt);
     return resistance;
@@ -577,7 +580,7 @@ float res_high(void) {
 bool vin_ok(void) {
     float volt;
 
-    /* Omvandla till matningsspänning */
+    /* Omvandla till matningsspÃ¤nning */
     volt = ((float)(read_analogue_input(3)))/74.7;
 
     if (volt < 6) {
